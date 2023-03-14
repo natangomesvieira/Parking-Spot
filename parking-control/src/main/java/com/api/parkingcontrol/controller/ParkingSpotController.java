@@ -18,6 +18,9 @@ import com.api.parkingcontrol.services.ParkingSpotService;
 
 import jakarta.validation.Valid;
 
+/*Na controller é que existe os endpoints que ficará disponível para ser acessado através 
+ do front end*/
+
 @RestController
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RequestMapping("/parking-spot")
@@ -31,6 +34,19 @@ public class ParkingSpotController {
 
 	@PostMapping("/register")
 	public ResponseEntity<Object> saveParkingSpot(@RequestBody @Valid ParkingSpotDto parkingSpotDto){
+		
+		if(parkingSpotService.existsByLicensePlateCar(parkingSpotDto.getLicensePlateCar())) {
+			return ResponseEntity.status(HttpStatus.CONFLICT).body("Conflict: License Plate Car is already in use!");
+		}
+		
+		if(parkingSpotService.existsByParkingSpotNumber(parkingSpotDto.getParkingSpotNumber())) {
+			return ResponseEntity.status(HttpStatus.CONFLICT).body("Conflict: Parking Spot is already in use!");
+		}
+		
+		if(parkingSpotService.existsByApartmentAndBlock(parkingSpotDto.getApartment(), parkingSpotDto.getBlock())) {
+			return ResponseEntity.status(HttpStatus.CONFLICT).body("Conflict: Parking Spot already registered for this apartment/block!");
+		}
+		
 		var parkingSpotModel = new ParkingSpotModel();
 		BeanUtils.copyProperties(parkingSpotDto, parkingSpotModel);
 		parkingSpotModel.setRegistrationDate(LocalDateTime.now(ZoneId.of("UTC")));

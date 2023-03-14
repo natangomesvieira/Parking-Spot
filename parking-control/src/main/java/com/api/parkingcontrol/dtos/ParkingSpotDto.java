@@ -3,6 +3,10 @@ package com.api.parkingcontrol.dtos;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
+/*Dtos são utilizados para "mascarar" os dados que serão requisitados no banco de dados
+ para a camada controller não ter acesso direto a camada q faz acesso ao banco
+ com isso a controller não precisa nem saber quais campos existem de fato no banco*/
+
 public class ParkingSpotDto {
 
 	@NotBlank
